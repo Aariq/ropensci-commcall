@@ -1,0 +1,249 @@
+---
+title: "Harnessing HPC power with {targets}"
+author: "Eric R. Scott"
+institute: "CCT Data Science, University of Arizona"
+date: "2023-01-31"
+date-format: "medium"
+logo: "images/logo.png"
+format: 
+  uaz-revealjs:
+    theme: "custom.scss"
+editor: visual
+---
+
+## My Background
+
+```{r}
+#| include: false
+
+library(targets)
+library(visNetwork)
+```
+
+::: incremental
+-   Ecologist turned research software engineer
+
+-   Not an HPC professional or expert
+
+-   Used {targets} a little in my PhD, extensively in my postdoc, some in my current role
+
+-   Feels most comfortable never leaving the comfort of RStudio Desktop
+:::
+
+## {targets} forces you to make parallelization easy
+
+-   Modular workflows, target factories, and branching create workflows that are naturally parallelizable
+
+    ```{r}
+    #| fig-height: 4 
+    tar_dir({
+      tar_script({
+        tar_option_set()
+        read_wrangle_data <- function(data_file) {
+          1
+        }
+        fit_model <- function(data) {
+          2
+        }
+        make_plot <- function(data, ...) {
+          3
+        }
+        list(
+          tar_target(data_file, ""),
+          tar_target(data, read_wrangle_data(data_file)),
+          tar_target(model1, fit_model(data)),
+          tar_target(model2, fit_model(data)),
+          tar_target(model3, fit_model(data)),
+          tar_target(subplot1, make_plot(model1)),
+          tar_target(subplot2, make_plot(model2)),
+          tar_target(subplot3, make_plot(model3)),
+          tar_target(plot, paste0(subplot1, subplot2, subplot3))
+        )
+      })
+      tar_make(reporter = "silent")
+      tar_visnetwork(targets_only = TRUE)
+    })
+
+    ```
+
+## Running targets in parallell
+
+-   If you set up your workflow with `use_targets()` then you're likely already in good shape.
+
+-   E.g. `tar_make_clustermq(workers = 3)` or `tar_make_future(workers = 3)`
+
+-   Targets can be run as parallel processes on your computer *or* jobs on a computing cluster
+
+## Persistent vs. Transient workers
+
+::: columns
+::: {.column width="50%"}
+Persistent workers with `clustermq`
+
+-   Overhead: One-time cost to set up workers
+
+-   System dependency on `zeromq`
+:::
+
+::: {.column width="50%"}
+Transient workers with `future`
+
+-   Every target gets its own worker (more overhead)
+
+-   No additional system dependencies
+:::
+:::
+
+## Setup `clustermq` on a cluster {.small}
+
+::: incremental
+1.  Take the basic HPC training at your organization
+2.  Install `clustermq` R package on the HPC
+3.  You might need to open a support ticket to get ZeroMQ (<https://zeromq.org/>) installed
+4.  On the HPC, in a directory, launch R and run `targets::use_targets()`
+:::
+
+## Setup `clustermq` on a cluster {.small}
+
+5.  Edit the SLURM (or other scheduler) template that was created
+
+```{bash}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "4,15-16"
+#!/bin/sh
+
+#SBATCH --job-name={{ job_name }}        # job name
+#SBATCH --partition=hpg-default          # partition
+#SBATCH --output={{ log_file | logs/workers/pipeline%j_%a.out }} # you can add .%a for array index
+#SBATCH --error={{ log_file | logs/workers/pipeline%j_%a.err}}   # log file
+#SBATCH --mem-per-cpu={{ memory | 8GB }}     # memory
+#SBATCH --array=1-{{ n_jobs }}               # job array
+#SBATCH --cpus-per-task={{ cores | 1 }}
+#SBATCH --time={{ time | 1440 }}
+
+source /etc/profile
+
+ulimit -v $(( 1024 * {{ memory | 8192 }} ))
+module load R/4.0 #R 4.1 not working currently           
+module load pandoc  #For rendering RMarkdown
+CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")'
+
+```
+
+6.  Check that `clustermq` works
+7.  Check that `tar_make_clustermq()` works
+
+## How to work comfortably
+
+-   Cluster setup doesn't solve problem of working from the comfort of RStudio
+
+-   Cluster use through command line or X11 window RStudio (awful quality)
+
+-   Targets store not synced to cluster via GitHub
+
+## Develop local, sync, run on cluster
+
+![](images/cluster-1.png)
+
+## Cloud storage
+
+![](images/cluster-2.png)
+
+## SSH connection
+
+![](images/cluster-3.png)
+
+## SSH connection
+
+::: incremental
+-   Develop and run workflow on your computer
+
+-   Targets are sent off to the cluster to be run as SLURM jobs
+
+-   Results returned and `_targets/` store remains on your computer
+
+-   Ideal when:
+
+    -   Only some targets need cluster computing
+
+    -   Targets don't run *too* long
+
+    -   No access to cloud storage
+
+    -   No comfortable way to use RStudio on the cluster
+:::
+
+## SSH connection setup {.smaller}
+
+1.  Copy SLURM template to cluster
+2.  Edit `~/.Rprofile` on the cluster:
+
+```{r}
+#| eval: false
+#| echo: true
+#| filename: .Rprofile
+options(
+  clustermq.scheduler = "slurm",
+  #path to template on cluster
+  clustermq.template = "~/slurm_clustermq.tmpl"
+)
+```
+
+3.  Set options in `_targets.R` on your computer:
+
+```{r}
+#| eval: false
+#| echo: true
+#| filename: _targets.R
+options(
+  clustermq.scheduler = "ssh",
+  clustermq.ssh.host = "<username@hpc.university.edu>", # however you SSH into your HPC
+  clustermq.ssh.timeout = 30, # longer timeout
+  clustermq.ssh.log = "~/cmq_ssh.log" # log for easier debugging
+)
+
+```
+
+::: callout-note
+Packages used in the pipeline need to be installed on the HPC and local computer
+:::
+
+## One last step: write it all down!
+
+-   Template GitHub repo with setup instructions in README
+
+-   Tell the HPC experts about it
+
+For University of Florida:
+
+-   On the HPC: <https://github.com/BrunaLab/hipergator-targets>
+
+-   Using SSH connector: <https://github.com/BrunaLab/hipergator-targets-ssh>
+
+For Univrsity of Arizona (WIP):
+
+-   
+
+## Lessons Learned: UF
+
+::: incremental
+-   Transfer of R objects back and forth is biggest bottleneck for SSH connector
+-   2FA surprisingly not an issue
+:::
+
+## Lessons Learned: Tufts University
+
+::: incremental
+-   Couldn't get `zeromq` installed because I couldn't get an HPC person to email me back!
+-   `future` backend worked, but overhead was too much to be helpful
+:::
+
+## Lessons Learned: University of Arizona
+
+::: incremental
+-   SSH connector relies on an R session running on login node, which is not possible at UA
+-   UA provides Open On Demand RStudio in web browser
+    -   `use_targets()` detects SLURM scheduler, but Open On Demand session can't submit SLURM jobs
+    -   Doesn't solve the problem of syncing the targets store, but makes it easier to develop on the cluster
+:::
