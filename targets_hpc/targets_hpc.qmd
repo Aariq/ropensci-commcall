@@ -66,11 +66,11 @@ library(visNetwork)
 
     ```
 
-## Running targets in parallell
+## Running targets in parallel
 
--   If you set up your workflow with `use_targets()` then you're likely already in good shape.
+-   `use_targets()` automatically sets things up
 
--   E.g. `tar_make_clustermq(workers = 3)` or `tar_make_future(workers = 3)`
+-   Use `tar_make_clustermq()` or `tar_make_future()` with `workers` arg
 
 -   Targets can be run as parallel processes on your computer *or* jobs on a computing cluster
 
@@ -80,7 +80,7 @@ library(visNetwork)
 ::: {.column width="50%"}
 Persistent workers with `clustermq`
 
--   Overhead: One-time cost to set up workers
+-   One-time cost to set up workers
 
 -   System dependency on `zeromq`
 :::
@@ -136,11 +136,13 @@ CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }
 
 ## How to work comfortably
 
--   Cluster setup doesn't solve problem of working from the comfort of RStudio
+::: incremental
+-   May need to run from command line without RStudio
 
--   Cluster use through command line or X11 window RStudio (awful quality)
+-   Options for RStudio could be clunky
 
--   Targets store not synced to cluster via GitHub
+-   Data store (`_targets/`) not synced with local computer
+:::
 
 ## Develop local, sync, run on cluster
 
@@ -209,22 +211,6 @@ options(
 Packages used in the pipeline need to be installed on the HPC and local computer
 :::
 
-## One last step: write it all down!
-
--   Template GitHub repo with setup instructions in README
-
--   Tell the HPC experts about it
-
-For University of Florida:
-
--   On the HPC: <https://github.com/BrunaLab/hipergator-targets>
-
--   Using SSH connector: <https://github.com/BrunaLab/hipergator-targets-ssh>
-
-For Univrsity of Arizona (WIP):
-
--   
-
 ## Lessons Learned: UF
 
 ::: incremental
@@ -244,6 +230,22 @@ For Univrsity of Arizona (WIP):
 ::: incremental
 -   SSH connector relies on an R session running on login node, which is not possible at UA
 -   UA provides Open On Demand RStudio in web browser
-    -   `use_targets()` detects SLURM scheduler, but Open On Demand session can't submit SLURM jobs
-    -   Doesn't solve the problem of syncing the targets store, but makes it easier to develop on the cluster
+    -   `use_targets()` sets `clustermq.scheduler = "slurm"`, but needs to be `"multicore"` to work
+    -   Need to request a session (and potentially wait) every time you want to work
 :::
+
+## One last step: write it all down!
+
+-   Template GitHub repo with setup instructions in README
+
+-   Tell the HPC experts about it
+
+University of Florida:
+
+-   On the HPC: <https://github.com/BrunaLab/hipergator-targets>
+
+-   Using SSH connector: <https://github.com/BrunaLab/hipergator-targets-ssh>
+
+University of Arizona (WIP):
+
+-   
