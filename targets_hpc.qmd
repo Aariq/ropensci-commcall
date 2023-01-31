@@ -25,14 +25,12 @@ library(visNetwork)
 
 -   Not an HPC professional or expert
 
--   Used {targets} a little in my PhD, extensively in my postdoc, some in my current role
-
 -   Feels most comfortable never leaving the comfort of RStudio Desktop
 :::
 
 ## {targets} forces you to make parallelization easy
 
--   Modular workflows, target factories, and branching create workflows that are naturally parallelizable
+-   Modular workflows & [branching](https://books.ropensci.org/targets/dynamic.html) create independent targets
 
     ```{r}
     #| fig-height: 4 
@@ -68,11 +66,15 @@ library(visNetwork)
 
 ## Running targets in parallel
 
+::: incremental
 -   `use_targets()` automatically sets things up
 
--   Use `tar_make_clustermq()` or `tar_make_future()` with `workers` arg
+-   Use `tar_make_clustermq()` or `tar_make_future()` to run in parallel
 
--   Targets can be run as parallel processes on your computer *or* jobs on a computing cluster
+-   Parallel processes on your computer *or* jobs on a computing cluster
+
+-   *Potentially* easy entry to high performance computing
+:::
 
 ## Persistent vs. Transient workers
 
@@ -80,17 +82,21 @@ library(visNetwork)
 ::: {.column width="50%"}
 Persistent workers with `clustermq`
 
+::: incremental
 -   One-time cost to set up workers
 
 -   System dependency on `zeromq`
+:::
 :::
 
 ::: {.column width="50%"}
 Transient workers with `future`
 
+::: incremental
 -   Every target gets its own worker (more overhead)
 
 -   No additional system dependencies
+:::
 :::
 :::
 
@@ -98,12 +104,12 @@ Transient workers with `future`
 
 ::: incremental
 1.  Take the basic HPC training at your organization
-2.  Install `clustermq` R package on the HPC
+2.  Install `clustermq` R package on the cluster
 3.  You might need to open a support ticket to get ZeroMQ (<https://zeromq.org/>) installed
-4.  On the HPC, in a directory, launch R and run `targets::use_targets()`
+4.  On the cluster, in a directory, launch R and run `targets::use_targets()`
 :::
 
-## Setup `clustermq` on a cluster {.small}
+## Setup `clustermq` on a cluster {.smaller}
 
 5.  Edit the SLURM (or other scheduler) template that was created
 
@@ -128,7 +134,6 @@ ulimit -v $(( 1024 * {{ memory | 8192 }} ))
 module load R/4.0 #R 4.1 not working currently           
 module load pandoc  #For rendering RMarkdown
 CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }}")'
-
 ```
 
 6.  Check that `clustermq` works
@@ -171,8 +176,6 @@ CMQ_AUTH={{ auth }} R --no-save --no-restore -e 'clustermq:::worker("{{ master }
 
     -   Targets don't run *too* long
 
-    -   No access to cloud storage
-
     -   No comfortable way to use RStudio on the cluster
 :::
 
@@ -200,7 +203,7 @@ options(
 #| filename: _targets.R
 options(
   clustermq.scheduler = "ssh",
-  clustermq.ssh.host = "<username@hpc.university.edu>", # however you SSH into your HPC
+  clustermq.ssh.host = "<username@hpc.university.edu>", # however you SSH into cluster
   clustermq.ssh.timeout = 30, # longer timeout
   clustermq.ssh.log = "~/cmq_ssh.log" # log for easier debugging
 )
@@ -208,7 +211,7 @@ options(
 ```
 
 ::: callout-note
-Packages used in the pipeline need to be installed on the HPC and local computer
+Packages used in the pipeline need to be installed on the cluster and local computer
 :::
 
 ## Lessons Learned: UF
@@ -225,13 +228,20 @@ Packages used in the pipeline need to be installed on the HPC and local computer
 -   `future` backend worked, but overhead was too much to be helpful
 :::
 
-## Lessons Learned: University of Arizona
+## Lessons Learned: University of Arizona{.smaller}
 
+::: columns
+::: {.column width="50%"}
 ::: incremental
--   SSH connector relies on an R session running on login node, which is not possible at UA
--   UA provides Open On Demand RStudio in web browser
-    -   `use_targets()` sets `clustermq.scheduler = "slurm"`, but needs to be `"multicore"` to work
-    -   Need to request a session (and potentially wait) every time you want to work
+-   SSH connector requires an R session to run on login node---not possible at UA!
+-   Open On Demand RStudio Server
+-   `targets` auto-detects SLURM, but need to run as "multicore"
+:::
+:::
+
+::: {.column width="50%"}
+![](images/ood.png)
+:::
 :::
 
 ## One last step: write it all down!
@@ -242,10 +252,8 @@ Packages used in the pipeline need to be installed on the HPC and local computer
 
 University of Florida:
 
--   On the HPC: <https://github.com/BrunaLab/hipergator-targets>
+-   On the HPC: [BrunaLab/hipergator-targets](https://github.com/BrunaLab/hipergator-targets)
 
--   Using SSH connector: <https://github.com/BrunaLab/hipergator-targets-ssh>
+-   Using SSH connector: [BrunaLab/hipergator-targets-ssh](https://github.com/BrunaLab/hipergator-targets-ssh)
 
-University of Arizona (WIP):
-
--   
+University of Arizona (WIP): [cct-datascience/targets-uahpc](https://github.com/cct-datascience/targets-uahpc)

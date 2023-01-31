@@ -413,7 +413,6 @@ Eric R. Scott
 <ul>
 <li class="fragment"><p>Ecologist turned research software engineer</p></li>
 <li class="fragment"><p>Not an HPC professional or expert</p></li>
-<li class="fragment"><p>Used {targets} a little in my PhD, extensively in my postdoc, some in my current role</p></li>
 <li class="fragment"><p>Feels most comfortable never leaving the comfort of RStudio Desktop</p></li>
 </ul>
 </div>
@@ -421,38 +420,45 @@ Eric R. Scott
 <section id="targets-forces-you-to-make-parallelization-easy" class="slide level2">
 <h2>{targets} forces you to make parallelization easy</h2>
 <ul>
-<li><p>Modular workflows, target factories, and branching create workflows that are naturally parallelizable</p>
+<li><p>Modular workflows &amp; <a href="https://books.ropensci.org/targets/dynamic.html">branching</a> create independent targets</p>
 <div class="cell">
 <div class="cell-output-display">
-<div class="visNetwork html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-e3b83b5978ddefe3f12d" style="width:960px;height:384px;"></div>
-<script type="application/json" data-for="htmlwidget-e3b83b5978ddefe3f12d">{"x":{"nodes":{"name":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"type":["stem","stem","stem","stem","stem","stem","stem","stem","stem"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[0.001,0.001,0,0.001,0.001,0.001,0,0.002,0.001],"bytes":[51,53,50,50,50,56,51,51,51],"branches":[null,null,null,null,null,null,null,null,null],"label":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"id":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"level":[2,1,3,3,3,5,4,4,4],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot"]},"edges":{"from":["data","data","data","model1","model2","model3","subplot1","subplot2","subplot3","data_file"],"to":["model1","model2","model3","subplot1","subplot2","subplot3","plot","plot","plot","data"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"interaction":{"zoomSpeed":1},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem"],"color":["#354823","#899DA4"],"shape":["dot","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
+<div class="visNetwork html-widget html-fill-item-overflow-hidden html-fill-item" id="htmlwidget-8259d3d8d978340e2ae8" style="width:960px;height:384px;"></div>
+<script type="application/json" data-for="htmlwidget-8259d3d8d978340e2ae8">{"x":{"nodes":{"name":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"type":["stem","stem","stem","stem","stem","stem","stem","stem","stem"],"status":["uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate","uptodate"],"seconds":[0.001,0.001,0,0.001,0,0,0,0.001,0],"bytes":[51,53,50,50,50,56,51,51,51],"branches":[null,null,null,null,null,null,null,null,null],"label":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"color":["#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823","#354823"],"id":["data","data_file","model1","model2","model3","plot","subplot1","subplot2","subplot3"],"level":[2,1,3,3,3,5,4,4,4],"shape":["dot","dot","dot","dot","dot","dot","dot","dot","dot"]},"edges":{"from":["data","data","data","model1","model2","model3","subplot1","subplot2","subplot3","data_file"],"to":["model1","model2","model3","subplot1","subplot2","subplot3","plot","plot","plot","data"],"arrows":["to","to","to","to","to","to","to","to","to","to"]},"nodesToDataframe":true,"edgesToDataframe":true,"options":{"width":"100%","height":"100%","nodes":{"shape":"dot","physics":false},"manipulation":{"enabled":false},"edges":{"smooth":{"type":"cubicBezier","forceDirection":"horizontal"}},"physics":{"stabilization":false},"interaction":{"zoomSpeed":1},"layout":{"hierarchical":{"enabled":true,"direction":"LR"}}},"groups":null,"width":null,"height":null,"idselection":{"enabled":false,"style":"width: 150px; height: 26px","useLabels":true,"main":"Select by id"},"byselection":{"enabled":false,"style":"width: 150px; height: 26px","multiple":false,"hideColor":"rgba(200,200,200,0.5)","highlight":false},"main":{"text":"","style":"font-family:Georgia, Times New Roman, Times, serif;font-weight:bold;font-size:20px;text-align:center;"},"submain":null,"footer":null,"background":"rgba(0, 0, 0, 0)","highlight":{"enabled":true,"hoverNearest":false,"degree":{"from":1,"to":1},"algorithm":"hierarchical","hideColor":"rgba(200,200,200,0.5)","labelOnly":true},"collapse":{"enabled":true,"fit":false,"resetHighlight":true,"clusterOptions":null,"keepCoord":true,"labelSuffix":"(cluster)"},"legend":{"width":0.2,"useGroups":false,"position":"right","ncol":1,"stepX":100,"stepY":100,"zoom":true,"nodes":{"label":["Up to date","Stem"],"color":["#354823","#899DA4"],"shape":["dot","dot"]},"nodesToDataframe":true},"tooltipStay":300,"tooltipStyle":"position: fixed;visibility:hidden;padding: 5px;white-space: nowrap;font-family: verdana;font-size:14px;font-color:#000000;background-color: #f5f4ed;-moz-border-radius: 3px;-webkit-border-radius: 3px;border-radius: 3px;border: 1px solid #808074;box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);"},"evals":[],"jsHooks":[]}</script>
 </div>
 </div></li>
 </ul>
 </section>
 <section id="running-targets-in-parallel" class="slide level2">
 <h2>Running targets in parallel</h2>
+<div>
 <ul>
-<li><p><code>use_targets()</code> automatically sets things up</p></li>
-<li><p>Use <code>tar_make_clustermq()</code> or <code>tar_make_future()</code> with <code>workers</code> arg</p></li>
-<li><p>Targets can be run as parallel processes on your computer <em>or</em> jobs on a computing cluster</p></li>
+<li class="fragment"><p><code>use_targets()</code> automatically sets things up</p></li>
+<li class="fragment"><p>Use <code>tar_make_clustermq()</code> or <code>tar_make_future()</code> to run in parallel</p></li>
+<li class="fragment"><p>Parallel processes on your computer <em>or</em> jobs on a computing cluster</p></li>
+<li class="fragment"><p><em>Potentially</em> easy entry to high performance computing</p></li>
 </ul>
+</div>
 </section>
 <section id="persistent-vs.-transient-workers" class="slide level2">
 <h2>Persistent vs.&nbsp;Transient workers</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <p>Persistent workers with <code>clustermq</code></p>
+<div>
 <ul>
-<li><p>One-time cost to set up workers</p></li>
-<li><p>System dependency on <code>zeromq</code></p></li>
+<li class="fragment"><p>One-time cost to set up workers</p></li>
+<li class="fragment"><p>System dependency on <code>zeromq</code></p></li>
 </ul>
+</div>
 </div><div class="column" style="width:50%;">
 <p>Transient workers with <code>future</code></p>
+<div>
 <ul>
-<li><p>Every target gets its own worker (more overhead)</p></li>
-<li><p>No additional system dependencies</p></li>
+<li class="fragment"><p>Every target gets its own worker (more overhead)</p></li>
+<li class="fragment"><p>No additional system dependencies</p></li>
 </ul>
+</div>
 </div>
 </div>
 </section>
@@ -461,13 +467,13 @@ Eric R. Scott
 <div>
 <ol type="1">
 <li class="fragment">Take the basic HPC training at your organization</li>
-<li class="fragment">Install <code>clustermq</code> R package on the HPC</li>
+<li class="fragment">Install <code>clustermq</code> R package on the cluster</li>
 <li class="fragment">You might need to open a support ticket to get ZeroMQ (<a href="https://zeromq.org/" class="uri">https://zeromq.org/</a>) installed</li>
-<li class="fragment">On the HPC, in a directory, launch R and run <code>targets::use_targets()</code></li>
+<li class="fragment">On the cluster, in a directory, launch R and run <code>targets::use_targets()</code></li>
 </ol>
 </div>
 </section>
-<section id="setup-clustermq-on-a-cluster-1" class="slide level2 small">
+<section id="setup-clustermq-on-a-cluster-1" class="slide level2 smaller">
 <h2>Setup <code>clustermq</code> on a cluster</h2>
 <ol start="5" type="1">
 <li>Edit the SLURM (or other scheduler) template that was created</li>
@@ -529,7 +535,6 @@ Eric R. Scott
 <ul>
 <li class="fragment"><p>Only some targets need cluster computing</p></li>
 <li class="fragment"><p>Targets don’t run <em>too</em> long</p></li>
-<li class="fragment"><p>No access to cloud storage</p></li>
 <li class="fragment"><p>No comfortable way to use RStudio on the cluster</p></li>
 </ul></li>
 </ul>
@@ -563,7 +568,7 @@ Eric R. Scott
 </div>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a><span class="fu">options</span>(</span>
 <span id="cb3-2"><a href="#cb3-2"></a>  <span class="at">clustermq.scheduler =</span> <span class="st">"ssh"</span>,</span>
-<span id="cb3-3"><a href="#cb3-3"></a>  <span class="at">clustermq.ssh.host =</span> <span class="st">"&lt;username@hpc.university.edu&gt;"</span>, <span class="co"># however you SSH into your HPC</span></span>
+<span id="cb3-3"><a href="#cb3-3"></a>  <span class="at">clustermq.ssh.host =</span> <span class="st">"&lt;username@hpc.university.edu&gt;"</span>, <span class="co"># however you SSH into cluster</span></span>
 <span id="cb3-4"><a href="#cb3-4"></a>  <span class="at">clustermq.ssh.timeout =</span> <span class="dv">30</span>, <span class="co"># longer timeout</span></span>
 <span id="cb3-5"><a href="#cb3-5"></a>  <span class="at">clustermq.ssh.log =</span> <span class="st">"~/cmq_ssh.log"</span> <span class="co"># log for easier debugging</span></span>
 <span id="cb3-6"><a href="#cb3-6"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -578,7 +583,7 @@ Eric R. Scott
 <p><strong>Note</strong></p>
 </div>
 <div class="callout-content">
-<p>Packages used in the pipeline need to be installed on the HPC and local computer</p>
+<p>Packages used in the pipeline need to be installed on the cluster and local computer</p>
 </div>
 </div>
 </div>
@@ -601,17 +606,20 @@ Eric R. Scott
 </ul>
 </div>
 </section>
-<section id="lessons-learned-university-of-arizona" class="slide level2">
+<section id="lessons-learned-university-of-arizona" class="slide level2 smaller">
 <h2>Lessons Learned: University of Arizona</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
 <div>
 <ul>
-<li class="fragment">SSH connector relies on an R session running on login node, which is not possible at UA</li>
-<li class="fragment">UA provides Open On Demand RStudio in web browser
-<ul>
-<li class="fragment"><code>use_targets()</code> sets <code>clustermq.scheduler = "slurm"</code>, but needs to be <code>"multicore"</code> to work</li>
-<li class="fragment">Need to request a session (and potentially wait) every time you want to work</li>
-</ul></li>
+<li class="fragment">SSH connector requires an R session to run on login node—not possible at UA!</li>
+<li class="fragment">Open On Demand RStudio Server</li>
+<li class="fragment"><code>targets</code> auto-detects SLURM, but need to run as “multicore”</li>
 </ul>
+</div>
+</div><div class="column" style="width:50%;">
+<p><img data-src="images/ood.png"></p>
+</div>
 </div>
 </section>
 <section id="one-last-step-write-it-all-down" class="slide level2">
@@ -622,13 +630,10 @@ Eric R. Scott
 </ul>
 <p>University of Florida:</p>
 <ul>
-<li><p>On the HPC: <a href="https://github.com/BrunaLab/hipergator-targets" class="uri">https://github.com/BrunaLab/hipergator-targets</a></p></li>
-<li><p>Using SSH connector: <a href="https://github.com/BrunaLab/hipergator-targets-ssh" class="uri">https://github.com/BrunaLab/hipergator-targets-ssh</a></p></li>
+<li><p>On the HPC: <a href="https://github.com/BrunaLab/hipergator-targets">BrunaLab/hipergator-targets</a></p></li>
+<li><p>Using SSH connector: <a href="https://github.com/BrunaLab/hipergator-targets-ssh">BrunaLab/hipergator-targets-ssh</a></p></li>
 </ul>
-<p>University of Arizona (WIP):</p>
-<ul>
-<li></li>
-</ul>
+<p>University of Arizona (WIP): <a href="https://github.com/cct-datascience/targets-uahpc">cct-datascience/targets-uahpc</a></p>
 
 <img src="images/logo.png" class="slide-logo r-stretch"><div class="footer footer-default">
 

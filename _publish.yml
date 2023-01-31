@@ -1,0 +1,4 @@
+- source: targets_hpc.qmd
+  quarto-pub:
+    - id: be667dc9-f321-4b7d-846e-943b90fa63e8
+      url: 'https://quartopub.com/sites/cct-datascience/harnessing-hpc-power-with-targets'
